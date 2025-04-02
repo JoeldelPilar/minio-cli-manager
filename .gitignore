@@ -1,0 +1,28 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Shell script specific
+*.sh~
+*.sh.bak
+*.sh.swp
+
+# Environment variables
+.env
+.env.*
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# IDE specific
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace 
