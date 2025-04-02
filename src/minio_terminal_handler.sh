@@ -419,25 +419,59 @@ download_file() {
     MODE="download"
     navigate_directories
     NAV_RESULT=$?
-    if [ "$NAV_RESULT" -eq 1 ]; then
-        return
-    elif [ "$NAV_RESULT" -eq 2 ]; then
-        echo -e "${TEXT_COLOR}Selected file: $SELECTED_FILE${NC}"
-    else
-        echo -e "${TEXT_COLOR}No file selected. Try again.${NC}"
-        return
-    fi
     
-    read -p "$(echo -e "${SAKURA_PINK}${BOLD}Enter local folder to save the file (0 for main menu): ${NC}")" DOWNLOAD_PATH
-    [ "$DOWNLOAD_PATH" == "0" ] && return
-    if [ ! -d "$DOWNLOAD_PATH" ]; then
-        read -p "$(echo -e "${SAKURA_PINK}${BOLD}Folder does not exist. Create folder? (y/n): ${NC}")" CREATE_DIR
-        if [[ "$CREATE_DIR" =~ ^[Yy] ]]; then
-            mkdir -p "$DOWNLOAD_PATH"
-        else
+    case $NAV_RESULT in
+        0)
+            echo -e "${TEXT_COLOR}No file selected. Returning to menu.${NC}"
+            sleep 1
             return
+            ;;
+        1)
+            return
+            ;;
+        2)
+            # Verify that the selected file exists and is accessible
+            if ! mc stat "$SELECTED_FILE_PATH" &>/dev/null; then
+                echo -e "${TEXT_COLOR}Error: Cannot access file '$SELECTED_FILE_PATH'${NC}"
+                echo -e "${TEXT_COLOR}Please check if the file exists and you have proper permissions.${NC}"
+                read -p "$(echo -e "${SAKURA_PINK}${BOLD}Press Enter to continue...${NC}")"
+                return
+            fi
+            echo -e "${TEXT_COLOR}Selected file: $SELECTED_FILE${NC}"
+            ;;
+        *)
+            echo -e "${TEXT_COLOR}An unexpected error occurred. Please try again.${NC}"
+            sleep 1
+            return
+            ;;
+    esac
+    
+    while true; do
+        read -p "$(echo -e "${SAKURA_PINK}${BOLD}Enter local folder to save the file (0 for main menu): ${NC}")" DOWNLOAD_PATH
+        [ "$DOWNLOAD_PATH" == "0" ] && return
+        
+        # Expand ~ to home directory if used
+        DOWNLOAD_PATH="${DOWNLOAD_PATH/#\~/$HOME}"
+        
+        if [ ! -d "$DOWNLOAD_PATH" ]; then
+            read -p "$(echo -e "${SAKURA_PINK}${BOLD}Folder does not exist. Create folder? (y/n): ${NC}")" CREATE_DIR
+            if [[ "$CREATE_DIR" =~ ^[Yy] ]]; then
+                if ! mkdir -p "$DOWNLOAD_PATH"; then
+                    echo -e "${TEXT_COLOR}Error: Could not create directory. Check permissions.${NC}"
+                    continue
+                fi
+            else
+                continue
+            fi
         fi
-    fi
+        
+        # Verify write permissions to download directory
+        if [ ! -w "$DOWNLOAD_PATH" ]; then
+            echo -e "${TEXT_COLOR}Error: No write permission to '$DOWNLOAD_PATH'${NC}"
+            continue
+        fi
+        break
+    done
     
     read -p "$(echo -e "${SAKURA_PINK}${BOLD}Save as '$SELECTED_FILE'? (y/n, 0 for main menu): ${NC}")" USE_ORIGINAL_NAME
     [ "$USE_ORIGINAL_NAME" == "0" ] && return
@@ -457,14 +491,16 @@ download_file() {
     fi
     
     echo -e "${TEXT_COLOR}Downloading '$SELECTED_FILE_PATH' to '$SAVE_PATH'...${NC}"
-    mc cp "$SELECTED_FILE_PATH" "$SAVE_PATH"
-    if [ $? -eq 0 ]; then
-        clear
-        echo -e "${TEXT_COLOR}Download successful! File saved to: $SAVE_PATH${NC}"
+    if ! mc cp "$SELECTED_FILE_PATH" "$SAVE_PATH" 2>/tmp/mc_error; then
+        ERROR_MSG=$(cat /tmp/mc_error)
+        echo -e "${TEXT_COLOR}Download failed: $ERROR_MSG${NC}"
         read -p "$(echo -e "${SAKURA_PINK}${BOLD}Press Enter to continue...${NC}")"
-    else
-        echo -e "${TEXT_COLOR}Download failed.${NC}"
+        return
     fi
+    
+    clear
+    echo -e "${TEXT_COLOR}Download successful! File saved to: $SAVE_PATH${NC}"
+    read -p "$(echo -e "${SAKURA_PINK}${BOLD}Press Enter to continue...${NC}")"
 }
 
 # Main menu
