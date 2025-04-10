@@ -48,8 +48,6 @@ select_alias() {
     if [ ${#ALIASES[@]} -eq 0 ]; then
         echo -e "${TEXT_COLOR}No MinIO aliases defined via environment variables.${NC}"
         echo -e "${TEXT_COLOR}Define aliases with MINIO_ALIAS_ONE to MINIO_ALIAS_FIVE.${NC}"
-        echo -e "${TEXT_COLOR}Using default aliases for now.${NC}"
-        ALIASES=("mlgn" "mlgn-hallonpi")
     fi
     
     while true; do

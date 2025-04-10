@@ -32,14 +32,14 @@ help:
 install:
 	@echo "${GREEN}==>${NC} Installing MinIO CLI Manager..."
 	@chmod +x $(SCRIPTS_DIR)/install.sh
-	@./$(SCRIPTS_DIR)/install.sh
+	@sudo ./$(SCRIPTS_DIR)/install.sh
 
 # Uninstall the script
 .PHONY: uninstall
 uninstall:
 	@echo "${GREEN}==>${NC} Uninstalling MinIO CLI Manager..."
 	@chmod +x $(SCRIPTS_DIR)/install.sh
-	@./$(SCRIPTS_DIR)/install.sh uninstall
+	@sudo ./$(SCRIPTS_DIR)/install.sh uninstall
 
 # Run tests
 .PHONY: test

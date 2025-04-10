@@ -8,20 +8,30 @@ An interactive terminal-based tool for managing files in MinIO storage. The scri
 - 📥 Download files from MinIO
 - 📋 List files and directories
 - 🔄 Easy directory navigation
-- 🎨 Beautiful color-coded interface
+- 🎨 Color-coded interface
 - 🔐 Support for multiple MinIO aliases
 
 ## ⚙️ Installation
 
-1. Make sure you have MinIO Client (mc) installed
-2. Configure your MinIO aliases with:
-   ```bash
-   mc alias set <alias-name> <minio-url> <access-key> <secret-key>
-   ```
-3. Make the script executable:
-   ```bash
-   chmod +x minio_terminal_handler.sh
-   ```
+1.  **Prerequisites:**
+    *   Ensure you have `git` and `make` installed on your system.
+    *   Make sure you have the MinIO Client (`mc`) installed and configured with your desired aliases. You can set up aliases using:
+        ```bash
+        mc alias set <your-alias-name> <minio-url> <access-key> <secret-key>
+        ```
+
+2.  **Clone the Repository:**
+    ```bash
+    git clone https://github.com/joeldelpilar/minio-cli-manager.git
+    cd minio-cli-manager
+    ```
+
+3.  **Install the `mcli` command:**
+    This command will copy the script to `/usr/local/bin` and make it executable. It requires administrator privileges.
+    ```bash
+    sudo make install
+    ```
+    The script will confirm successful installation.
 
 ## 🔧 Configuration
 
@@ -34,20 +44,58 @@ export MINIO_ALIAS_FOUR="your-alias-4"
 export MINIO_ALIAS_FIVE="your-alias-5"
 ```
 
-If no environment variables are set, the default aliases "mlgn" and "mlgn-hallonpi" will be used.
-
 ## 🎮 Usage
 
-Run the script with:
+Once installed, you can run the MinIO CLI Manager from anywhere in your terminal by simply typing:
+
 ```bash
-./minio_terminal_handler.sh
+mcli
 ```
+
+The script will launch, presenting you with the main menu:
+
+1.  Upload a file
+2.  Download a file
+3.  List files
+0.  Exit script
+
+Follow the on-screen prompts to interact with your MinIO storage.
 
 ### Main menu offers the following options:
 1. Upload a file
 2. Download a file
 3. List files
 0. Exit script
+
+## ⬆️ Updating
+
+To update `mcli` to the latest version from the repository:
+
+1.  Navigate to your cloned repository directory:
+    ```bash
+    cd path/to/minio-cli-manager # The directory where you originally ran 'git clone'
+    ```
+2.  Pull the latest changes from the repository:
+    ```bash
+    git pull origin main
+    ```
+3.  Re-install the script to copy the updated version:
+    ```bash
+    sudo make install
+    ```
+
+## 🗑️ Uninstallation
+
+To remove the `mcli` command from your system:
+
+1.  Navigate to your cloned repository directory:
+    ```bash
+    cd path/to/minio-cli-manager
+    ```
+2.  Run the uninstallation command using the Makefile:
+    ```bash
+    sudo make uninstall
+    ```
 
 ## 🎨 Color Scheme
 
